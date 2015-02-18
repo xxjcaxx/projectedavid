@@ -1,7 +1,7 @@
 import QtQuick 2.0
 
 Rectangle {
-    width: 360
+    width: 365
     height: 360
     Text {
         text: qsTr("Hello World")
