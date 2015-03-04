@@ -10,15 +10,15 @@ Item {
     Webcam {
         id: webcam
         x: 2*(parent.width/2.5)
-        y: 0
+        y: parent.height/5
         width: parent.width/5
         height: parent.height/2.5
-           SequentialAnimation on t {
+        /*   SequentialAnimation on t {
                 NumberAnimation { to: 1; duration: 2500; easing.type: Easing.InQuad }
                 NumberAnimation { to: 0; duration: 2500; easing.type: Easing.OutQuad }
                 loops: Animation.Infinite
                 running: true
-            }
+            }*/
         }
 
     MouseArea {
@@ -51,7 +51,7 @@ Item {
             y: 0
             width: parent.width/2.5
             height: parent.height/2.5
-            color: "#a10d0d"
+           // color: "#a10d0d"
         }
         Rectangle {
             id: rectangle2
@@ -59,7 +59,7 @@ Item {
             y: 0
             width: parent.width/2.5
             height: parent.height/2.5
-            color: "#a500a8"
+          //  color: "#a500a8"
         }
         Rectangle {
             id: rectangle3
@@ -67,7 +67,7 @@ Item {
             y:parent.height/2.5
             width: parent.width/2.5
             height: parent.height/2.5
-            color: "#00a8a8"
+         //   color: "#00a8a8"
         }
         Rectangle {
             id: rectangle4
@@ -80,7 +80,7 @@ Item {
         Rectangle {
             id: menus
             x: 2*(parent.width/2.5)
-            y:parent.height/2.5
+            y:0
             width: parent.width/5
             height: parent.height/2.5
            color: "#aaaaaa"
@@ -98,4 +98,5 @@ Item {
 
 
     }
+
 }
