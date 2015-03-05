@@ -61,40 +61,58 @@ Raphael.fn.connection = function (obj1, obj2, line, bg) {
 
 var el;
 window.onload = function () {
+
+    /*Las funciones del drag*/
+
     var dragger = function () {
-        this.ox = this.type == "rect" ? this.attr("x") : this.attr("cx");
-        this.oy = this.type == "rect" ? this.attr("y") : this.attr("cy");
+        this.default_transform = this.transform();
         this.animate({"fill-opacity": .2}, 500);
-        console.log("holaaaa"); // cal obrir el inspect amb botó dret.
     };
+
         move = function (dx, dy) {
-            var att = this.type == "rect" ? {x: this.ox + dx, y: this.oy + dy} : {cx: this.ox + dx, cy: this.oy + dy};
-            this.attr(att);
+            this.data("myset").transform(this.default_transform+'T'+dx+','+dy);
             for (var i = connections.length; i--;) {
                 r.connection(connections[i]);
             }
             r.safari();
+
         };
+
         up = function () {
+             this.default_transform = this.transform();
             this.animate({"fill-opacity": 0}, 500);
         };
-        r = Raphael("holder", 640, 480);
-        connections = [];
-        var aa= r.rect(290, 180, 60, 40, 2), ee=r.text(290, 180,"Hola");
-        var f=r.set([aa,ee]);
 
-        shapes = [  r.ellipse(190, 100, 30, 20),
+    // Fin de las funciones de drag
+
+        r = Raphael("holder", 640, 480); //Crear el holder on dibuixar
+
+        connections = []; //Array de connexions
+        shapes=[]; //Array de sets
+
+    for(i=0;i<5;i++){
+
+        var aa= r.rect(0,0, 70, 50, 5), ee=r.text(20, 40,"Hola");
+        aa.attr({fill: color, stroke: color, "fill-opacity": 0, "stroke-width": 2, cursor: "move"});
+        var f=r.set([aa,ee]); f.data("myset",f);
+        shapes.push(f);
+}
+       /* shapes = [  r.rect(190, 100, 30, 20,2),
                     r.rect(290, 80, 60, 40, 10),
-                    r.rect(290, 180, 60, 40, 2),
-                    r.ellipse(450, 100, 20, 20), f
-                ];
+                    r.rect(290, 180, 60, 40,10),
+                    r.rect(450, 100, 20, 20,2), f
+                ];*/
+
+
     for (var i = 0, ii = shapes.length; i < ii; i++) {
         var color = Raphael.getColor();
-        shapes[i].attr({fill: color, stroke: color, "fill-opacity": 0, "stroke-width": 2, cursor: "move"});
+        shapes[i].attr({fill: color, stroke: color, "fill-opacity": 0,  cursor: "move"});
+
         shapes[i].drag(move, dragger, up);
     }
     connections.push(r.connection(shapes[0], shapes[1], "#fff"));
     connections.push(r.connection(shapes[1], shapes[2], "#fff"));
-    connections.push(r.connection(shapes[1], shapes[3], "#000"));
+    connections.push(r.connection(shapes[1], shapes[3], "#fff"));
+    connections.push(r.connection(shapes[1], shapes[4], "#fff"));
 
 };
