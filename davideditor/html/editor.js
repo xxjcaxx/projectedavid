@@ -2,8 +2,8 @@
 
 
 
-Raphael.fn.connection = function (obj1, obj2, line, bg) {
-    if (obj1.line && obj1.from && obj1.to) {
+Raphael.fn.connection = function (obj1, obj2, line, n, bg) { //(objecte1, objecte2, colorlinea, posició, background de la linia)
+    if (obj1.line && obj1.from && obj1.to) { //si ha sigut cridada per un drag
         line = obj1;
         obj1 = line.from;
         obj2 = line.to;
@@ -87,29 +87,25 @@ window.onload = function () {
 
         r = Raphael("holder", 640, 480); //Crear el holder on dibuixar
 
+    // Creació inicial de les shapes i les connexions
+
         connections = []; //Array de connexions
         shapes=[]; //Array de sets
 
     for(i=0;i<5;i++){
-
-        var aa= r.rect(0,0, 70, 50, 5), ee=r.text(20, 40,"Hola");
-        aa.attr({fill: color, stroke: color, "fill-opacity": 0, "stroke-width": 2, cursor: "move"});
-        var f=r.set([aa,ee]); f.data("myset",f);
+        var color = Raphael.getColor();
+        var rectangulo= r.rect(0,0, 70, 50, 5), texto=r.text(20, 40,"Hola") ;
+        texto.attr({fill:"#FFF"});
+        rectangulo.attr({fill: color, stroke: color, "fill-opacity": 0, "stroke-width": 2, cursor: "move"});
+        var f=r.set([rectangulo,texto]); f.data("myset",f);
         shapes.push(f);
-}
-       /* shapes = [  r.rect(190, 100, 30, 20,2),
-                    r.rect(290, 80, 60, 40, 10),
-                    r.rect(290, 180, 60, 40,10),
-                    r.rect(450, 100, 20, 20,2), f
-                ];*/
+    }
 
 
     for (var i = 0, ii = shapes.length; i < ii; i++) {
-        var color = Raphael.getColor();
-        shapes[i].attr({fill: color, stroke: color, "fill-opacity": 0,  cursor: "move"});
-
         shapes[i].drag(move, dragger, up);
     }
+
     connections.push(r.connection(shapes[0], shapes[1], "#fff"));
     connections.push(r.connection(shapes[1], shapes[2], "#fff"));
     connections.push(r.connection(shapes[1], shapes[3], "#fff"));
