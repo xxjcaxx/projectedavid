@@ -3,13 +3,16 @@
 
 
 Raphael.fn.connection = function (obj1, obj2, line, n, bg) { //(objecte1, objecte2, colorlinea, posició, background de la linia)
+    if (n) { var nn= n;}
     if (obj1.line && obj1.from && obj1.to) { //si ha sigut cridada per un drag
         line = obj1;
         obj1 = line.from;
         obj2 = line.to;
+        nn = line.nn;
     }
+
     var bb1 = obj1.getBBox(),
-        bb2 = obj2.getBBox(),
+        bb2 = obj2.getBBox();
         p = [{x: bb1.x + bb1.width / 2, y: bb1.y - 1},
         {x: bb1.x + bb1.width / 2, y: bb1.y + bb1.height + 1},
         {x: bb1.x - 1, y: bb1.y + bb1.height / 2},
@@ -29,6 +32,9 @@ Raphael.fn.connection = function (obj1, obj2, line, n, bg) { //(objecte1, object
             }
         }
     }
+
+  //  console.debug(d);
+
     if (dis.length == 0) {
         var res = [0, 4];
     } else {
@@ -38,12 +44,24 @@ Raphael.fn.connection = function (obj1, obj2, line, n, bg) { //(objecte1, object
         y1 = p[res[0]].y,
         x4 = p[res[1]].x,
         y4 = p[res[1]].y;
+
+
+    x1= bb1.x + bb1.width-bb1.width/20;
+    y1= bb1.y + nn*bb1.height/5; // Falla, pero hay que ponerlo
+    x4= bb2.x;
+    y4= bb2.y+bb2.height/2;
+
+    console.debug(nn);
+
+
     dx = Math.max(Math.abs(x1 - x4) / 2, 10);
     dy = Math.max(Math.abs(y1 - y4) / 2, 10);
     var x2 = [x1, x1, x1 - dx, x1 + dx][res[0]].toFixed(3),
         y2 = [y1 - dy, y1 + dy, y1, y1][res[0]].toFixed(3),
         x3 = [0, 0, 0, 0, x4, x4, x4 - dx, x4 + dx][res[1]].toFixed(3),
         y3 = [0, 0, 0, 0, y1 + dy, y1 - dy, y4, y4][res[1]].toFixed(3);
+
+
     var path = ["M", x1.toFixed(3), y1.toFixed(3), "C", x2, y2, x3, y3, x4.toFixed(3), y4.toFixed(3)].join(",");
     if (line && line.line) {
         line.bg && line.bg.attr({path: path});
@@ -54,7 +72,8 @@ Raphael.fn.connection = function (obj1, obj2, line, n, bg) { //(objecte1, object
             bg: bg && bg.split && this.path(path).attr({stroke: bg.split("|")[0], fill: "none", "stroke-width": bg.split("|")[1] || 3}),
             line: this.path(path).attr({stroke: color, fill: "none"}),
             from: obj1,
-            to: obj2
+            to: obj2,
+            nn: n
         };
     }
 };
@@ -91,24 +110,38 @@ window.onload = function () {
 
         connections = []; //Array de connexions
         shapes=[]; //Array de sets
+        rW = 70;
+        rH = 50;
+        tx = 20;
+        ty = rH - rH/4;
 
     for(i=0;i<5;i++){
         var color = Raphael.getColor();
-        var rectangulo= r.rect(0,0, 70, 50, 5), texto=r.text(20, 40,"Hola") ;
+        var rectangulo= r.rect(0,0, rW, rH, 5),
+                texto=r.text(tx, ty,"Hola"),
+                opcion1=r.ellipse(rW,rH/5,rW/20,rW/20),
+                opcion2=r.ellipse(rW,rH/5*2,rW/20,rW/20),
+                opcion3=r.ellipse(rW,rH/5*3,rW/20,rW/20),
+                opcion4=r.ellipse(rW,rH/5*4,rW/20,rW/20);
         texto.attr({fill:"#FFF"});
         rectangulo.attr({fill: color, stroke: color, "fill-opacity": 0, "stroke-width": 2, cursor: "move"});
-        var f=r.set([rectangulo,texto]); f.data("myset",f);
+        opcion1.attr({fill: color, stroke: "#fff", "fill-opacity": 100, "stroke-width": 2, cursor: "move"});
+        opcion2.attr({fill: color, stroke: "#fff", "fill-opacity": 100, "stroke-width": 2, cursor: "move"});
+        opcion3.attr({fill: color, stroke: "#fff", "fill-opacity": 100, "stroke-width": 2, cursor: "move"});
+        opcion4.attr({fill: color, stroke: "#fff", "fill-opacity": 100, "stroke-width": 2, cursor: "move"});
+        var f=r.set([rectangulo,texto,opcion1,opcion2,opcion3,opcion4]); f.data("myset",f);
         shapes.push(f);
     }
 
 
     for (var i = 0, ii = shapes.length; i < ii; i++) {
         shapes[i].drag(move, dragger, up);
+        shapes[i].data("myset").transform(this.defaul_transform+'T'+i*80+','+i*70);
     }
 
-    connections.push(r.connection(shapes[0], shapes[1], "#fff"));
-    connections.push(r.connection(shapes[1], shapes[2], "#fff"));
-    connections.push(r.connection(shapes[1], shapes[3], "#fff"));
-    connections.push(r.connection(shapes[1], shapes[4], "#fff"));
+    connections.push(r.connection(shapes[0], shapes[1], "#fff",1));
+    connections.push(r.connection(shapes[1], shapes[2], "#fff",1));
+    connections.push(r.connection(shapes[1], shapes[3], "#fff",2));
+    connections.push(r.connection(shapes[1], shapes[4], "#fff",3));
 
 };
