@@ -1,7 +1,5 @@
 //  http://cancerbero.mbarreneche.com/raphaeltut/
 
-
-
 Raphael.fn.connection = function (obj1, obj2, line, n, bg) { //(objecte1, objecte2, colorlinea, posició, background de la linia)
     if (n) { var nn= n;}
     if (obj1.line && obj1.from && obj1.to) { //si ha sigut cridada per un drag
@@ -51,7 +49,7 @@ Raphael.fn.connection = function (obj1, obj2, line, n, bg) { //(objecte1, object
     x4= bb2.x;
     y4= bb2.y+bb2.height/2;
 
-    console.debug(nn);
+  //  console.debug(nn);
 
 
     dx = Math.max(Math.abs(x1 - x4) / 2, 10);
@@ -103,8 +101,12 @@ window.onload = function () {
         };
 
     // Fin de las funciones de drag
+    var container = $("#holder");
+    r_width= container.width();
+    r_height=container.height();
+    r_x=0; r_y=0;
 
-        r = Raphael("holder", 640, 480); //Crear el holder on dibuixar
+        r = Raphael("holder", r_width, r_height); //Crear el holder on dibuixar
 
     // Creació inicial de les shapes i les connexions
 
@@ -115,7 +117,7 @@ window.onload = function () {
         tx = 20;
         ty = rH - rH/4;
 
-    for(i=0;i<5;i++){
+    for(i=0;i<6;i++){
         var color = Raphael.getColor();
         var rectangulo= r.rect(0,0, rW, rH, 5),
                 texto=r.text(tx, ty,"Hola"),
@@ -143,5 +145,23 @@ window.onload = function () {
     connections.push(r.connection(shapes[1], shapes[2], "#fff",1));
     connections.push(r.connection(shapes[1], shapes[3], "#fff",2));
     connections.push(r.connection(shapes[1], shapes[4], "#fff",3));
+    connections.push(r.connection(shapes[1], shapes[5], "#fff",4));
+
+
+    // using the event helper
+    $('#holder').mousewheel(function(event) {
+       // console.log(event.deltaX, event.deltaY, event.deltaFactor);
+        var parentOffset = $(this).parent().offset();
+
+        wa=r_width+20* event.deltaY*event.deltaFactor*-1;
+        ha=r_height+20* event.deltaY*event.deltaFactor*-1;
+        if( wa != 0 && ha!=0 ) {
+            r.setViewBox(r_x, r_y, wa, ha, false);
+            r_width=wa;
+            r_height=ha;
+        }
+        console.log(event.deltaX, event.deltaY, event.deltaFactor, r_width, r_height, event.pageX, event.pageY);
+    });
+
 
 };
