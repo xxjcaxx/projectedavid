@@ -76,6 +76,90 @@ Raphael.fn.connection = function (obj1, obj2, line, n, bg) { //(objecte1, object
     }
 };
 
+
+// Función para ampliar un cuadrado y permitir su edición:
+function crear_set(rW,rH,tx,ty) {
+
+    var color = "#555";
+    var rectangulo= r.rect(0,0, rW, rH, 5),
+            texto=r.text(tx, ty,"Hola"),
+            entrada=r.ellipse(0,rH/2,rW/20,rW/20),
+            opcion1=r.ellipse(rW,rH/5,rW/20,rW/20),
+            opcion2=r.ellipse(rW,rH/5*2,rW/20,rW/20),
+            opcion3=r.ellipse(rW,rH/5*3,rW/20,rW/20),
+            opcion4=r.ellipse(rW,rH/5*4,rW/20,rW/20);
+    texto.attr({fill:"#FFF"});
+    rectangulo.attr({fill: color, stroke: color, "fill-opacity": 100, "stroke-width": 2, cursor: "move"});
+    entrada.attr({fill: color, stroke: "#fff", "fill-opacity": 100, "stroke-width": 1, cursor: "move"});
+    opcion1.attr({fill: color, stroke: "#fff", "fill-opacity": 100, "stroke-width": 1, cursor: "move"});
+    opcion2.attr({fill: color, stroke: "#fff", "fill-opacity": 100, "stroke-width": 1, cursor: "move"});
+    opcion3.attr({fill: color, stroke: "#fff", "fill-opacity": 100, "stroke-width": 1, cursor: "move"});
+    opcion4.attr({fill: color, stroke: "#fff", "fill-opacity": 100, "stroke-width": 1, cursor: "move"});
+
+    opcion1.mousedown(function(e){
+        drag_opcion(e.clientX,e.clientY);
+    });
+
+
+    var f=r.set([rectangulo,texto,entrada,opcion1,opcion2,opcion3,opcion4]); f.data("myset",f); f.data("limites",rectangulo); f.data("ampliado",false);
+
+    return f;
+};
+
+
+var enlazando=false;
+var pos_enlazando=[];
+var path_enlace;
+
+function drag_opcion(x,y){
+
+    if(!enlazando){
+    enlazando=true;
+    pos_enlazando=[x,y];
+
+    p1= {x: pos_enlazando[0], y: pos_enlazando[1]}; cp1= {x: pos_enlazando[0]+50, y: pos_enlazando[1]};
+    p2= {x: x, y: y};  cp2= {x: x-50, y: y};
+    s="M"+p1.x+","+p1.y + 	/* begins in p1 */
+                "C" + 					/* a cubic Bézier curve defined by */
+                cp1.x+","+cp1.y +   	/* first control point cp1	*/
+                ","+cp2.x+","+cp2.y +	/* second control point cp2 */
+                ","+p2.x+", "+p2.y;		/* ends in p2 */
+    path_enlace = r.path(s);
+
+
+    }
+    else{
+    enlazando=false;
+
+    }
+    console.debug(pos_enlazando);
+};
+
+
+ampliar = function (){
+//console.debug(this.data("ampliado"));
+    if(this.data("ampliado")){
+        this.data("ampliado",false);
+        this.data("myset").forEach(function(shape, index){
+                shape.transform(shape.transform()+"s0.33,0.33");
+            })
+
+    } else {
+
+        this.data("ampliado",true);
+    var bbox= this.data("limites").getBBox();
+
+
+    this.data("myset").forEach(function(shape, index){
+            shape.transform(shape.transform()+"s3,3");
+        })
+   // console.debug(bbox);
+
+    }
+
+};
+
+
 var el;
 window.onload = function () {
 
@@ -86,25 +170,28 @@ window.onload = function () {
         this.animate({"fill-opacity": .2}, 500);
     };
 
-        move = function (dx, dy) {
+        move = function (dx, dy, x ,y, e) {
+            if (e.which==1){
             this.data("myset").transform(this.default_transform+'T'+dx+','+dy);
             for (var i = connections.length; i--;) {
                 r.connection(connections[i]);
             }
             r.safari();
 
+}
+           // console.debug(e.which);
         };
 
         up = function () {
              this.default_transform = this.transform();
-            this.animate({"fill-opacity": 0}, 500);
+            this.animate({"fill-opacity": 1}, 500);
         };
 
     // Fin de las funciones de drag
     var container = $("#holder");
-    r_width= container.width();
-    r_height=container.height();
-    r_x=0; r_y=0;
+    var r_width= container.width();
+    var r_height=container.height();
+    var r_x=0, r_y=0;
 
         r = Raphael("holder", r_width, r_height); //Crear el holder on dibuixar
 
@@ -118,27 +205,15 @@ window.onload = function () {
         ty = rH - rH/4;
 
     for(i=0;i<6;i++){
-        var color = Raphael.getColor();
-        var rectangulo= r.rect(0,0, rW, rH, 5),
-                texto=r.text(tx, ty,"Hola"),
-                opcion1=r.ellipse(rW,rH/5,rW/20,rW/20),
-                opcion2=r.ellipse(rW,rH/5*2,rW/20,rW/20),
-                opcion3=r.ellipse(rW,rH/5*3,rW/20,rW/20),
-                opcion4=r.ellipse(rW,rH/5*4,rW/20,rW/20);
-        texto.attr({fill:"#FFF"});
-        rectangulo.attr({fill: color, stroke: color, "fill-opacity": 0, "stroke-width": 2, cursor: "move"});
-        opcion1.attr({fill: color, stroke: "#fff", "fill-opacity": 100, "stroke-width": 2, cursor: "move"});
-        opcion2.attr({fill: color, stroke: "#fff", "fill-opacity": 100, "stroke-width": 2, cursor: "move"});
-        opcion3.attr({fill: color, stroke: "#fff", "fill-opacity": 100, "stroke-width": 2, cursor: "move"});
-        opcion4.attr({fill: color, stroke: "#fff", "fill-opacity": 100, "stroke-width": 2, cursor: "move"});
-        var f=r.set([rectangulo,texto,opcion1,opcion2,opcion3,opcion4]); f.data("myset",f);
+        f = crear_set(rW,rH,tx,ty);
         shapes.push(f);
     }
 
 
     for (var i = 0, ii = shapes.length; i < ii; i++) {
-        shapes[i].drag(move, dragger, up);
-        shapes[i].data("myset").transform(this.defaul_transform+'T'+i*80+','+i*70);
+        shapes[i][0].drag(move, dragger, up);
+        shapes[i].dblclick(ampliar);
+        shapes[i].data("myset").transform(this.default_transform+'T'+i*80+','+i*70);
     }
 
     connections.push(r.connection(shapes[0], shapes[1], "#fff",1));
@@ -148,19 +223,63 @@ window.onload = function () {
     connections.push(r.connection(shapes[1], shapes[5], "#fff",4));
 
 
+    /*El moviment del DRAG de la pantalla amb el botó del mig del ratoli*/
+
     // using the event helper
     $('#holder').mousewheel(function(event) {
-       // console.log(event.deltaX, event.deltaY, event.deltaFactor);
-        var parentOffset = $(this).parent().offset();
 
         wa=r_width+20* event.deltaY*event.deltaFactor*-1;
         ha=r_height+20* event.deltaY*event.deltaFactor*-1;
-        if( wa != 0 && ha!=0 ) {
+        if( wa > 0 && ha > 0 ) {
             r.setViewBox(r_x, r_y, wa, ha, false);
             r_width=wa;
             r_height=ha;
         }
         console.log(event.deltaX, event.deltaY, event.deltaFactor, r_width, r_height, event.pageX, event.pageY);
+    });
+
+    var dragg=false;
+    var dragg_x, dragg_y;
+
+   $('#holder').mousedown(function(e){
+     if(e.which==2) { dragg=true; dragg_x=e.clientX; dragg_y=e.clientY;}
+   });
+
+   $('#holder').mouseup(function(e){
+     dragg=false;
+     if(enlazando){
+      enlazando=false;
+         path_enlace.hide();
+     }
+   });
+
+
+
+    $('#holder').mousemove(function(e){
+        if(dragg){
+            var parentOffset = $(this).offset();
+
+            d_x=e.clientX - dragg_x;
+            d_y=e.clientY - dragg_y;
+            dragg_x=e.clientX; dragg_y=e.clientY;
+            r_x= r_x-d_x;
+            r_y= r_y-d_y;
+            r.setViewBox(r_x, r_y, r_width, r_height, false);
+            console.log(e.which,e.pageX,e.pageY,d_x,d_y);
+           }
+
+        if(enlazando){
+            p1= {x: pos_enlazando[0], y: pos_enlazando[1]}; cp1= {x: pos_enlazando[0]+50, y: pos_enlazando[1]};
+            p2= {x: e.clientX, y: e.clientY};  cp2= {x: e.clientX-50, y: e.clientY};
+            s="M"+p1.x+","+p1.y + 	/* begins in p1 */
+                        "C" + 					/* a cubic Bézier curve defined by */
+                        cp1.x+","+cp1.y +   	/* first control point cp1	*/
+                        ","+cp2.x+","+cp2.y +	/* second control point cp2 */
+                        ","+p2.x+", "+p2.y;		/* ends in p2 */
+            path_enlace.attr({path: s});
+console.debug(pos_enlazando);
+        }
+
     });
 
 
