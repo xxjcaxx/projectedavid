@@ -97,11 +97,40 @@ function crear_set(rW,rH,tx,ty) {
     opcion4.attr({fill: color, stroke: "#fff", "fill-opacity": 100, "stroke-width": 1, cursor: "move"});
 
     opcion1.mousedown(function(e){
-        drag_opcion(e.clientX,e.clientY);
+        var bbox = this.getBBox();
+        console.debug(bbox);
+        drag_opcion(bbox.x,bbox.y+bbox.height/2,this.data("set"),1);
+    });
+    opcion2.mousedown(function(e){
+        var bbox = this.getBBox();
+        console.debug(bbox);
+        drag_opcion(bbox.x,bbox.y+bbox.height/2,this.data("set"),2);
+    });
+    opcion3.mousedown(function(e){
+        var bbox = this.getBBox();
+        console.debug(bbox);
+        drag_opcion(bbox.x,bbox.y+bbox.height/2,this.data("set"),3);
+    });
+    opcion4.mousedown(function(e){
+        var bbox = this.getBBox();
+        console.debug(bbox);
+        drag_opcion(bbox.x,bbox.y+bbox.height/2,this.data("set"),4);
     });
 
+    entrada.mouseup(function(e){
+        var bbox = this.getBBox();
+       // console.debug(bbox);
+        this.attr({stroke: "#fff"});
+        soltar_opcion(bbox.x,bbox.y+bbox.height/2,this.data("set"));
+    });
+
+    entrada.mouseover(function(e){ if(enlazando) this.attr({stroke: "#5f5"});});
 
     var f=r.set([rectangulo,texto,entrada,opcion1,opcion2,opcion3,opcion4]); f.data("myset",f); f.data("limites",rectangulo); f.data("ampliado",false);
+    opcion1.data("set",f); entrada.data("set",f);
+     opcion2.data("set",f); entrada.data("set",f);
+     opcion3.data("set",f); entrada.data("set",f);
+     opcion4.data("set",f); entrada.data("set",f);
 
     return f;
 };
@@ -109,13 +138,15 @@ function crear_set(rW,rH,tx,ty) {
 
 var enlazando=false;
 var pos_enlazando=[];
+var shape1_enlazando;
 var path_enlace;
 
-function drag_opcion(x,y){
+function drag_opcion(x,y,shape1,n){
 
     if(!enlazando){
     enlazando=true;
-    pos_enlazando=[x,y];
+    pos_enlazando=[x,y,n];
+    shape1_enlazando=shape1;
 
     p1= {x: pos_enlazando[0], y: pos_enlazando[1]}; cp1= {x: pos_enlazando[0]+50, y: pos_enlazando[1]};
     p2= {x: x, y: y};  cp2= {x: x-50, y: y};
@@ -124,7 +155,7 @@ function drag_opcion(x,y){
                 cp1.x+","+cp1.y +   	/* first control point cp1	*/
                 ","+cp2.x+","+cp2.y +	/* second control point cp2 */
                 ","+p2.x+", "+p2.y;		/* ends in p2 */
-    path_enlace = r.path(s);
+    path_enlace = r.path(s).attr({stroke:"#5F5"});
 
 
     }
@@ -132,7 +163,22 @@ function drag_opcion(x,y){
     enlazando=false;
 
     }
-    console.debug(pos_enlazando);
+    console.debug("drag",pos_enlazando);
+};
+
+function soltar_opcion(x,y,shape2){
+console.debug("soltar",pos_enlazando,shape2,shape1_enlazando);
+    if(!enlazando){
+
+
+    }
+    else{
+    enlazando=false;
+        connections.push(r.connection(shape1_enlazando, shape2, "#fff", pos_enlazando[2]));
+        path_enlace.hide();
+
+    }
+
 };
 
 
@@ -161,6 +207,7 @@ ampliar = function (){
 
 
 var el;
+var connections = []; //Array de connexions
 window.onload = function () {
 
     /*Las funciones del drag*/
@@ -197,7 +244,7 @@ window.onload = function () {
 
     // Creació inicial de les shapes i les connexions
 
-        connections = []; //Array de connexions
+
         shapes=[]; //Array de sets
         rW = 70;
         rH = 50;
@@ -243,13 +290,16 @@ window.onload = function () {
 
    $('#holder').mousedown(function(e){
      if(e.which==2) { dragg=true; dragg_x=e.clientX; dragg_y=e.clientY;}
+
    });
 
    $('#holder').mouseup(function(e){
      dragg=false;
      if(enlazando){
-      enlazando=false;
+         console.debug("UP",pos_enlazando,enlazando);
+         enlazando=false;
          path_enlace.hide();
+         pos_enlazando=[];
      }
    });
 
@@ -268,16 +318,23 @@ window.onload = function () {
             console.log(e.which,e.pageX,e.pageY,d_x,d_y);
            }
 
+
+        //el enlazado
+
         if(enlazando){
+
+            posx = e.pageX - $(document).scrollLeft() - $('#holder').offset().left;
+            posy = e.pageY - $(document).scrollTop() - $('#holder').offset().top;
+
             p1= {x: pos_enlazando[0], y: pos_enlazando[1]}; cp1= {x: pos_enlazando[0]+50, y: pos_enlazando[1]};
-            p2= {x: e.clientX, y: e.clientY};  cp2= {x: e.clientX-50, y: e.clientY};
+            p2= {x: posx, y: posy};  cp2= {x: posx-50, y: posy};
             s="M"+p1.x+","+p1.y + 	/* begins in p1 */
                         "C" + 					/* a cubic Bézier curve defined by */
                         cp1.x+","+cp1.y +   	/* first control point cp1	*/
                         ","+cp2.x+","+cp2.y +	/* second control point cp2 */
                         ","+p2.x+", "+p2.y;		/* ends in p2 */
             path_enlace.attr({path: s});
-console.debug(pos_enlazando);
+          //  console.debug("Move",pos_enlazando,enlazando);
         }
 
     });
