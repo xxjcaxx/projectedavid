@@ -1,5 +1,8 @@
 //  http://cancerbero.mbarreneche.com/raphaeltut/
 
+var n_opciones=4; //Número d'opcions, per defecte 4
+
+
 Raphael.fn.connection = function (obj1, obj2, line, n, bg) { //(objecte1, objecte2, colorlinea, posició, background de la linia)
     if (n) { var nn= n;}
     if (obj1.line && obj1.from && obj1.to) { //si ha sigut cridada per un drag
@@ -77,45 +80,29 @@ Raphael.fn.connection = function (obj1, obj2, line, n, bg) { //(objecte1, object
 };
 
 
-// Función para ampliar un cuadrado y permitir su edición:
+
 function crear_set(rW,rH,tx,ty) {
 
     var color = "#555";
     var rectangulo= r.rect(0,0, rW, rH, 5),
             texto=r.text(tx, ty,"Hola"),
-            entrada=r.ellipse(0,rH/2,rW/20,rW/20),
-            opcion1=r.ellipse(rW,rH/5,rW/20,rW/20),
-            opcion2=r.ellipse(rW,rH/5*2,rW/20,rW/20),
-            opcion3=r.ellipse(rW,rH/5*3,rW/20,rW/20),
-            opcion4=r.ellipse(rW,rH/5*4,rW/20,rW/20);
+            entrada=r.ellipse(0,rH/2,rW/20,rW/20);
+
     texto.attr({fill:"#FFF"});
     rectangulo.attr({fill: color, stroke: color, "fill-opacity": 100, "stroke-width": 2, cursor: "move"});
     entrada.attr({fill: color, stroke: "#fff", "fill-opacity": 100, "stroke-width": 1, cursor: "move"});
-    opcion1.attr({fill: color, stroke: "#fff", "fill-opacity": 100, "stroke-width": 1, cursor: "move"});
-    opcion2.attr({fill: color, stroke: "#fff", "fill-opacity": 100, "stroke-width": 1, cursor: "move"});
-    opcion3.attr({fill: color, stroke: "#fff", "fill-opacity": 100, "stroke-width": 1, cursor: "move"});
-    opcion4.attr({fill: color, stroke: "#fff", "fill-opacity": 100, "stroke-width": 1, cursor: "move"});
+    var opciones=[];
+    for(i=0;i<n_opciones;i++){
+       opciones[i]=r.ellipse(rW,(rH/(n_opciones+1))*(i+1),rW/20,rW/20);
+       opciones[i].attr({fill: color, stroke: "#fff", "fill-opacity": 100, "stroke-width": 1, cursor: "move"});
+       opciones[i].mousedown(function(e){
+            var bbox = this.getBBox();
+            console.debug(bbox);
+            drag_opcion(bbox.x,bbox.y+bbox.height/2,this.data("set"),i+1);
+        });
 
-    opcion1.mousedown(function(e){
-        var bbox = this.getBBox();
-        console.debug(bbox);
-        drag_opcion(bbox.x,bbox.y+bbox.height/2,this.data("set"),1);
-    });
-    opcion2.mousedown(function(e){
-        var bbox = this.getBBox();
-        console.debug(bbox);
-        drag_opcion(bbox.x,bbox.y+bbox.height/2,this.data("set"),2);
-    });
-    opcion3.mousedown(function(e){
-        var bbox = this.getBBox();
-        console.debug(bbox);
-        drag_opcion(bbox.x,bbox.y+bbox.height/2,this.data("set"),3);
-    });
-    opcion4.mousedown(function(e){
-        var bbox = this.getBBox();
-        console.debug(bbox);
-        drag_opcion(bbox.x,bbox.y+bbox.height/2,this.data("set"),4);
-    });
+    }
+
 
     entrada.mouseup(function(e){
         var bbox = this.getBBox();
@@ -126,12 +113,11 @@ function crear_set(rW,rH,tx,ty) {
 
     entrada.mouseover(function(e){ if(enlazando) this.attr({stroke: "#5f5"});});
 
-    var f=r.set([rectangulo,texto,entrada,opcion1,opcion2,opcion3,opcion4]); f.data("myset",f); f.data("limites",rectangulo); f.data("ampliado",false);
-    opcion1.data("set",f); entrada.data("set",f);
-     opcion2.data("set",f); entrada.data("set",f);
-     opcion3.data("set",f); entrada.data("set",f);
-     opcion4.data("set",f); entrada.data("set",f);
-
+    var f=r.set([rectangulo,texto,entrada]); f.data("myset",f); f.data("limites",rectangulo); f.data("ampliado",false);
+    entrada.data("set",f);
+    for(i=0;i<n_opciones;i++){
+        f.push(opciones[i]);
+        opciones[i].data("set",f); }
     return f;
 };
 
@@ -243,8 +229,6 @@ window.onload = function () {
         r = Raphael("holder", r_width, r_height); //Crear el holder on dibuixar
 
     // Creació inicial de les shapes i les connexions
-
-
         shapes=[]; //Array de sets
         rW = 70;
         rH = 50;
@@ -315,7 +299,7 @@ window.onload = function () {
             r_x= r_x-d_x;
             r_y= r_y-d_y;
             r.setViewBox(r_x, r_y, r_width, r_height, false);
-            console.log(e.which,e.pageX,e.pageY,d_x,d_y);
+            //console.debug(e.pageX,e.pageY,d_x,d_y);
            }
 
 
@@ -340,4 +324,13 @@ window.onload = function () {
     });
 
 
+};
+
+window.onresize=function(){
+    var container = $("#holder");
+    var r_width= container.width();
+    var r_height=container.height();
+    r.setSize(r_width, r_height)
+r.setViewBox(0, 0, r_width, r_height, true);
+     //console.debug("resize ",r_width, r_height);
 };
