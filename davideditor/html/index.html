@@ -11,7 +11,7 @@
         }
         #holder {
             height: 80%;
-            left: 5%;
+            left: 1%;
             margin: 0px 0 0 0px;
             position: absolute;
             top: 1%;
@@ -37,6 +37,23 @@
             p {
                 text-align: center;
             }
+
+        #menus {
+        height: 15%;
+        left: 1%;
+        margin: 1% 0 0 0px;
+        padding: 0.5%;
+        position: absolute;
+        top: 81%;
+        width: 79%;
+        background-color:#3f3f3f;
+        -moz-border-radius: 10px;
+        -webkit-border-radius: 10px;
+        border: solid 1px #333;
+        }
+
+
+
         </style>
        <script src="jquery.js" type="text/javascript" charset="utf-8"></script>
         <script src="jquery.mousewheel.js" type="text/javascript" charset="utf-8"></script>
@@ -48,5 +65,9 @@
     </head>
     <body>
    <div id="holder"></div>
+   <div id="menus">
+    <input type="file" id="files" name="files[]" />
+   <output id="list"></output>
     </body>
+    </div>
 </html>

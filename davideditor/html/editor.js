@@ -1,6 +1,168 @@
 //  http://cancerbero.mbarreneche.com/raphaeltut/
 
+/*El manejo de archivos
+
+
+http://www.html5rocks.com/es/tutorials/file/dndfiles/
+
+*/
+
+var contenido;
+var r, shapes, rW,rH,tx,ty;
 var n_opciones=4; //Número d'opcions, per defecte 4
+var enlazando=false;
+var pos_enlazando=[];
+var shape1_enlazando;
+var path_enlace;
+
+var el;
+var connections = []; //Array de connexions
+
+function crear_set(rW,rH,tx,ty) {
+
+    var color = "#555";
+    var rectangulo= r.rect(0,0, rW, rH, 5),
+            texto=r.text(tx, ty,"Hola"),
+            entrada=r.ellipse(0,rH/2,rW/20,rW/20);
+
+    texto.attr({fill:"#FFF"});
+    rectangulo.attr({fill: color, stroke: color, "fill-opacity": 100, "stroke-width": 2, cursor: "move"});
+    entrada.attr({fill: color, stroke: "#fff", "fill-opacity": 100, "stroke-width": 1, cursor: "move"});
+    var opciones=[];
+    for(i=0;i<n_opciones;i++){
+       opciones[i]=r.ellipse(rW,(rH/(n_opciones+1))*(i+1),rW/20,rW/20);
+       opciones[i].attr({fill: color, stroke: "#fff", "fill-opacity": 100, "stroke-width": 1, cursor: "move"});
+       opciones[i].mousedown(function(e){
+            var bbox = this.getBBox();
+            console.debug(bbox);
+            drag_opcion(bbox.x,bbox.y+bbox.height/2,this.data("set"),i+1);
+        });
+
+    }
+
+
+    entrada.mouseup(function(e){
+        var bbox = this.getBBox();
+       // console.debug(bbox);
+        this.attr({stroke: "#fff"});
+        soltar_opcion(bbox.x,bbox.y+bbox.height/2,this.data("set"));
+    });
+
+    entrada.mouseover(function(e){ if(enlazando) this.attr({stroke: "#5f5"});});
+
+    var f=r.set([rectangulo,texto,entrada]); f.data("myset",f); f.data("limites",rectangulo); f.data("ampliado",false);
+    entrada.data("set",f);
+    for(i=0;i<n_opciones;i++){
+        f.push(opciones[i]);
+        opciones[i].data("set",f); }
+
+    //console.debug(f);
+    return f;
+};
+
+
+/*Las funciones del drag*/
+
+var dragger = function () {
+    this.default_transform = this.transform();
+    this.animate({"fill-opacity": .2}, 500);
+};
+
+var   move = function (dx, dy, x ,y, e) {
+        if (e.which==1){
+        this.data("myset").transform(this.default_transform+'T'+dx+','+dy);
+        for (var i = connections.length; i--;) {
+            r.connection(connections[i]);
+        }
+        r.safari();
+
+}
+       // console.debug(e.which);
+    };
+
+var    up = function () {
+         this.default_transform = this.transform();
+        this.animate({"fill-opacity": 1}, 500);
+    };
+
+// Fin de las funciones de drag
+
+
+function cargar(){
+
+  if(contenido) {
+
+    parser=new DOMParser();
+    xmlDoc=parser.parseFromString(contenido,"text/xml");
+
+    var screens = $("screen",xmlDoc);
+
+    console.log(screens.length);
+
+    for(ii=0;ii<screens.length;ii++){
+
+       var ff = crear_set(rW,rH,tx,ty);
+
+
+
+        shapes.push(ff);
+    }
+
+
+    for (var i = 0, ii = shapes.length; i < ii; i++) {
+        shapes[i][0].drag(move, dragger, up);
+        shapes[i].dblclick(ampliar);
+        shapes[i].data("myset").transform(this.default_transform+'T'+i*80+','+i*70);
+    }
+
+    connections.push(r.connection(shapes[0], shapes[1], "#fff",1));
+    connections.push(r.connection(shapes[1], shapes[2], "#fff",1));
+    connections.push(r.connection(shapes[1], shapes[3], "#fff",2));
+    connections.push(r.connection(shapes[1], shapes[4], "#fff",3));
+    connections.push(r.connection(shapes[1], shapes[5], "#fff",4));
+
+
+
+}
+
+
+
+}
+
+function handleFileSelect(evt) {
+  var files = evt.target.files; // FileList object
+
+  // files is a FileList of File objects. List some properties.
+  var output = [];
+   var f;
+   f = files[0];
+   output.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ',
+                f.size, ' bytes, modificada: ',
+                f.lastModifiedDate.toLocaleDateString(), '</li>');
+
+
+  document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
+
+               var reader = new FileReader();
+
+              // Closure to capture the file information.
+              reader.onload = (function(theFile) {
+                return function(e) {
+                    contenido= e.target.result;
+                    cargar();
+                };
+              })(f);
+
+              // Read in the file
+              reader.readAsText(f,"UTF-8");
+             // reader.readAsDataURL(f);
+
+}
+
+
+
+
+
 
 
 Raphael.fn.connection = function (obj1, obj2, line, n, bg) { //(objecte1, objecte2, colorlinea, posició, background de la linia)
@@ -81,51 +243,10 @@ Raphael.fn.connection = function (obj1, obj2, line, n, bg) { //(objecte1, object
 
 
 
-function crear_set(rW,rH,tx,ty) {
-
-    var color = "#555";
-    var rectangulo= r.rect(0,0, rW, rH, 5),
-            texto=r.text(tx, ty,"Hola"),
-            entrada=r.ellipse(0,rH/2,rW/20,rW/20);
-
-    texto.attr({fill:"#FFF"});
-    rectangulo.attr({fill: color, stroke: color, "fill-opacity": 100, "stroke-width": 2, cursor: "move"});
-    entrada.attr({fill: color, stroke: "#fff", "fill-opacity": 100, "stroke-width": 1, cursor: "move"});
-    var opciones=[];
-    for(i=0;i<n_opciones;i++){
-       opciones[i]=r.ellipse(rW,(rH/(n_opciones+1))*(i+1),rW/20,rW/20);
-       opciones[i].attr({fill: color, stroke: "#fff", "fill-opacity": 100, "stroke-width": 1, cursor: "move"});
-       opciones[i].mousedown(function(e){
-            var bbox = this.getBBox();
-            console.debug(bbox);
-            drag_opcion(bbox.x,bbox.y+bbox.height/2,this.data("set"),i+1);
-        });
-
-    }
 
 
-    entrada.mouseup(function(e){
-        var bbox = this.getBBox();
-       // console.debug(bbox);
-        this.attr({stroke: "#fff"});
-        soltar_opcion(bbox.x,bbox.y+bbox.height/2,this.data("set"));
-    });
-
-    entrada.mouseover(function(e){ if(enlazando) this.attr({stroke: "#5f5"});});
-
-    var f=r.set([rectangulo,texto,entrada]); f.data("myset",f); f.data("limites",rectangulo); f.data("ampliado",false);
-    entrada.data("set",f);
-    for(i=0;i<n_opciones;i++){
-        f.push(opciones[i]);
-        opciones[i].data("set",f); }
-    return f;
-};
 
 
-var enlazando=false;
-var pos_enlazando=[];
-var shape1_enlazando;
-var path_enlace;
 
 function drag_opcion(x,y,shape1,n){
 
@@ -192,35 +313,15 @@ ampliar = function (){
 };
 
 
-var el;
-var connections = []; //Array de connexions
+
 window.onload = function () {
 
-    /*Las funciones del drag*/
 
-    var dragger = function () {
-        this.default_transform = this.transform();
-        this.animate({"fill-opacity": .2}, 500);
-    };
 
-        move = function (dx, dy, x ,y, e) {
-            if (e.which==1){
-            this.data("myset").transform(this.default_transform+'T'+dx+','+dy);
-            for (var i = connections.length; i--;) {
-                r.connection(connections[i]);
-            }
-            r.safari();
+    document.getElementById('files').addEventListener('change', handleFileSelect, false);
 
-}
-           // console.debug(e.which);
-        };
 
-        up = function () {
-             this.default_transform = this.transform();
-            this.animate({"fill-opacity": 1}, 500);
-        };
 
-    // Fin de las funciones de drag
     var container = $("#holder");
     var r_width= container.width();
     var r_height=container.height();
@@ -235,23 +336,10 @@ window.onload = function () {
         tx = 20;
         ty = rH - rH/4;
 
-    for(i=0;i<6;i++){
-        f = crear_set(rW,rH,tx,ty);
-        shapes.push(f);
-    }
+    cargar();
 
 
-    for (var i = 0, ii = shapes.length; i < ii; i++) {
-        shapes[i][0].drag(move, dragger, up);
-        shapes[i].dblclick(ampliar);
-        shapes[i].data("myset").transform(this.default_transform+'T'+i*80+','+i*70);
-    }
 
-    connections.push(r.connection(shapes[0], shapes[1], "#fff",1));
-    connections.push(r.connection(shapes[1], shapes[2], "#fff",1));
-    connections.push(r.connection(shapes[1], shapes[3], "#fff",2));
-    connections.push(r.connection(shapes[1], shapes[4], "#fff",3));
-    connections.push(r.connection(shapes[1], shapes[5], "#fff",4));
 
 
     /*El moviment del DRAG de la pantalla amb el botó del mig del ratoli*/
@@ -331,6 +419,6 @@ window.onresize=function(){
     var r_width= container.width();
     var r_height=container.height();
     r.setSize(r_width, r_height)
-r.setViewBox(0, 0, r_width, r_height, true);
+    r.setViewBox(0, 0, r_width, r_height, true);
      //console.debug("resize ",r_width, r_height);
 };
