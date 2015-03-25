@@ -18,11 +18,11 @@ var path_enlace;
 var el;
 var connections = []; //Array de connexions
 
-function crear_set(rW,rH,tx,ty) {
+function crear_set(rW,rH,tx,ty,tex,img,mp3) {
 
     var color = "#555";
     var rectangulo= r.rect(0,0, rW, rH, 5),
-            texto=r.text(tx, ty,"Hola"),
+            texto=r.text(tx, ty,tex),
             entrada=r.ellipse(0,rH/2,rW/20,rW/20);
 
     texto.attr({fill:"#FFF"});
@@ -101,7 +101,9 @@ function cargar(){
 
     for(ii=0;ii<screens.length;ii++){
 
-       var ff = crear_set(rW,rH,tx,ty);
+        tex=$("text",screens).text();
+
+       var ff = crear_set(rW,rH,tx,ty,tex);
 
 
 
