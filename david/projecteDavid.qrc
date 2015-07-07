@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/projectedavid">
+        <file>proyectoDavid.qml</file>
+        <file>Resources/focusMain.qml</file>
+        <file>Resources/Core/GridMenu.qml</file>
+        <file>Resources/Core/Images/opcionPruebapec.png</file>
+        <file>Resources/Core/OptionMenu.qml</file>
+        <file>Resources/Core/ListViewDelegate.qml</file>
+        <file>Resources/Core/CamMenu.qml</file>
+    </qresource>
+</RCC>
