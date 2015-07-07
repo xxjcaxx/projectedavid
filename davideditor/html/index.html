@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <style type="text/css">
+        body {
+            background: #333;
+            color: #fff;
+            font: 300 100.1% "Helvetica Neue", Helvetica, "Arial Unicode MS", Arial, sans-serif;
+            padding:0px;
+        }
+        #holder {
+            height: 80%;
+            left: 1%;
+            margin: 0px 0 0 0px;
+            position: absolute;
+            top: 1%;
+            width: 80%;
+            background-color:#3f3f3f;
+        }
+        #copy {
+            bottom: 0;
+            font: 300 .7em "Helvetica Neue", Helvetica, "Arial Unicode MS", Arial, sans-serif;
+            position: absolute;
+            right: 1em;
+            text-align: right;
+        }
+        #copy a {
+            color: #fff;
+        }
+
+         #holder {
+                -moz-border-radius: 10px;
+                -webkit-border-radius: 10px;
+                border: solid 1px #333;
+            }
+            p {
+                text-align: center;
+            }
+
+        #menus {
+        height: 15%;
+        left: 1%;
+        margin: 1% 0 0 0px;
+        padding: 0.5%;
+        position: absolute;
+        top: 81%;
+        width: 79%;
+        background-color:#3f3f3f;
+        -moz-border-radius: 10px;
+        -webkit-border-radius: 10px;
+        border: solid 1px #333;
+        }
+
+
+
+        </style>
+       <script src="jquery.js" type="text/javascript" charset="utf-8"></script>
+        <script src="jquery.mousewheel.js" type="text/javascript" charset="utf-8"></script>
+        <script src="raphael-min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="panzoom.js" type="text/javascript" charset="utf-8"></script>
+        <script src="editor.js" type="text/javascript" charset="utf-8"></script>
+        <script src="jqui/jquery-ui.js"></script>
+
+    </head>
+    <body>
+   <div id="holder"></div>
+   <div id="menus">
+    <input type="file" id="files" name="files[]" />
+   <output id="list"></output>
+    </body>
+    </div>
+</html>

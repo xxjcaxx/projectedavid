@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<screens>
+  <screen id="main">
+    <frame position="top-right" link="vull"></frame>
+    <frame position="top-left" link="teclat"></frame>
+    <frame position="bottom-right"></frame>
+    <frame position="bottom-left"></frame>
+  </screen>
+
+  <screen id="vull">
+    <img src="vull.jpg"/>
+    <span class="text">Vull</span>
+    <sound src="vull.mp3"/>
+    <frame position="top-right"></frame>
+    <frame position="top-left"></frame>
+    <frame position="bottom-right"></frame>
+    <frame position="bottom-left"></frame>
+  </screen>
+
+  <screen id="teclat">
+    <img src="teclat.jpg"/>
+    <span class="text">Teclat</span>
+    <sound src="teclat.mp3"/>
+    <frame position="top-right"></frame>
+    <frame position="top-left"></frame>
+    <frame position="bottom-right"></frame>
+    <frame position="bottom-left"></frame>
+  </screen>
+
+
+</screens>

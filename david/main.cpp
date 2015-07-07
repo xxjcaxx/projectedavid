@@ -1,9 +1,15 @@
 #include <QtGui/QGuiApplication>
 #include "qtquick2applicationviewer.h"
+<<<<<<< HEAD
 #include <QtQuick/QQuickView>
 
 #include "webcam.h"
 #include "../shared/shared.h"
+=======
+
+#include "webcam.h"
+
+>>>>>>> f517c1e465b2ec0fab640b212e6611dfb617d5fb
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
@@ -12,6 +18,7 @@ int main(int argc, char *argv[])
     //  Nom de la clase ^     ^ Nom de la biblioteca   ^ Nom del type
 
 
+<<<<<<< HEAD
     //QtQuick2ApplicationViewer viewer;
     //viewer.setMainQmlFile(QStringLiteral("proyectoDavid.qml"));
     QQuickView view;
@@ -20,6 +27,13 @@ int main(int argc, char *argv[])
     view.show();
 
     //viewer.showExpanded();
+=======
+    QtQuick2ApplicationViewer viewer;
+    viewer.setMainQmlFile(QStringLiteral("qml/david/main.qml"));
+
+
+    viewer.showExpanded();
+>>>>>>> f517c1e465b2ec0fab640b212e6611dfb617d5fb
 
     return app.exec();
 }

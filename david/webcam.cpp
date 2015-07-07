@@ -136,7 +136,11 @@ void Webcam::cleanup()
 
 WebcamRenderer::~WebcamRenderer()
 {
+<<<<<<< HEAD
    delete m_program;
+=======
+   // delete m_program;
+>>>>>>> f517c1e465b2ec0fab640b212e6611dfb617d5fb
 }
 
 void Webcam::opencamera()
@@ -160,10 +164,17 @@ void Webcam::sync()
     m_renderer->setViewportSize(window()->size() * window()->devicePixelRatio());
     m_renderer->setT(m_t);
     m_renderer->setDimensions(m_x,m_y,m_width,m_height);
+<<<<<<< HEAD
     cv::Mat image;
     mCapture >> image;  //Matriu de pixels de cv, pot ser no siga una imatge visible
     m_renderer->setIMG(image);
     qDebug() << m_x;
+=======
+  //  cv::Mat image;
+  //  mCapture >> image;  //Matriu de pixels de cv, pot ser no siga una imatge visible
+  //  m_renderer->setIMG(image);
+  // qDebug() << m_x;
+>>>>>>> f517c1e465b2ec0fab640b212e6611dfb617d5fb
 
 }
 
@@ -175,11 +186,18 @@ void Webcam::timerEvent(QTimerEvent *event)
     // Do what you want with the image :-)
  m_renderer->setIMG(image);
     // Show the image
+<<<<<<< HEAD
  m_renderer->paint();
 
  qDebug() << m_t;
 
  if (window()) { window()->update(); /*qDebug() << W; */}
+=======
+   // m_renderer->paint();
+
+  //  qDebug() << m_t;
+  if (window()) { window()->update(); /*qDebug() << W; */}
+>>>>>>> f517c1e465b2ec0fab640b212e6611dfb617d5fb
 }
 
 
